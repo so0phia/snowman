@@ -1,0 +1,136 @@
+눈사람 모자
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Snowman Animation</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Canvas Snowman Animation</h1>
+    <canvas id="snowmanCanvas" width="800" height="800"></canvas>
+    <script>
+        window.onload = function () {
+            const canvas = document.getElementById('snowmanCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Function to draw a single snowman
+            function drawSnowman(x, y) {
+                // Draw the snowman body
+                function drawCircle(cx, cy, radius, fillColor) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = fillColor;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+
+                // Draw the snowman parts
+                drawCircle(x, y + 40, 20, 'white'); // Bottom circle
+                drawCircle(x, y + 20, 15, 'white'); // Middle circle
+                drawCircle(x, y, 10, 'white'); // Head circle
+
+                // Draw the eyes
+                drawCircle(x - 3.5, y - 2.5, 1, 'black'); // Left eye
+                drawCircle(x + 3.5, y - 2.5, 1, 'black'); // Right eye
+
+                // Draw the mouth
+                for (let i = 0; i < 5; i++) {
+                    drawCircle(x - 3.5 + i * 1.75, y + 5, 0.75, 'black');
+                }
+
+                // Draw the nose (carrot)
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, y + 5);
+                ctx.lineTo(x + 10, y + 2.5);
+                ctx.fillStyle = 'orange';
+                ctx.fill();
+                ctx.closePath();
+
+                // Draw the buttons
+                drawCircle(x, y + 15, 1, 'black');
+                drawCircle(x, y + 20, 1, 'black');
+                drawCircle(x, y + 25, 1, 'black');
+
+                // Draw the arms
+                function drawLine(x1, y1, x2, y2) {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.strokeStyle = 'brown';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+
+                drawLine(x - 15, y + 20, x - 30, y); // Left arm
+                drawLine(x + 15, y + 20, x + 30, y); // Right arm
+
+                // Draw the hat
+                ctx.fillStyle = 'black';
+                ctx.fillRect(x - 12, y - 20, 24, 5); // Brim
+                ctx.fillRect(x - 8, y - 35, 16, 15); // Top hat
+            }
+
+            // Snowman class
+            class Snowman {
+                constructor(x, y, size, speed) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.speed = speed;
+                }
+
+                draw() {
+                    drawSnowman(this.x, this.y, this.size);
+                }
+
+                update() {
+                    this.y += this.speed;
+                    if (this.y > canvas.height + this.size) {
+                        this.y = -this.size;
+                    }
+                }
+            }
+
+            // Create snowman objects
+            const snowmen = [];
+            for (let i = 0; i < 20; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = 40;
+                const speed = Math.random() * 2 + 1;
+                snowmen.push(new Snowman(x, y, size, speed));
+            }
+
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                snowmen.forEach(snowman => {
+                    snowman.update();
+                    snowman.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        };
+    </script>
+</body>
+</html>
